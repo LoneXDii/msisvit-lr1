@@ -5,8 +5,9 @@ import numpy
 
 def parse_file(file_path):
     with open(file_path, 'r') as f:
-        tree = ast.parse(f.read())
-    return tree
+        text = f.read()
+        tree = ast.parse(text)
+    return text,tree
 class MainWindow(QMainWindow):
     # Override class constructor
     file_path = ""
@@ -40,6 +41,7 @@ class MainWindow(QMainWindow):
         self.parse_button.setText("Рассчитать метрику Холстеда")
         self.parse_button.setMinimumWidth(200)
         self.parse_button.move(200, 0)
+        self.parse_button.setDisabled(True)
         self.parse_button.clicked.connect(self.on_parse_clicked)
 
         self.file_button = QPushButton(self)
@@ -71,8 +73,22 @@ class MainWindow(QMainWindow):
         #self.file_content.toPlainText() ##Код программы
         # operators = get_operators ##Вернет словарь из операторов и числа их появлений
         #operands = get_operands ##Вернет словарь из операндов и числа их появлений
-        operators = {"+": 10, "-": 3, "*": 4}
-        operands = {"oper1": 4, "oper2": 5}
+
+        text, tree = parse_file(self.file_path)
+        vars = count_variables(tree)
+        loops = count_loops(tree)
+        tryes = count_try_excent(tree)
+        opr = count_binaty_opr(tree)
+        funcs = count_func(tree, vars)
+        skobki = {"( )":count_skobki(text, funcs)}
+        operators = loops | tryes | opr | funcs
+        operands = vars | skobki
+
+
+
+        operators = {item[0]: item[1] for item in operators.items() if item[1] != 0}
+        operands = {item[0]: item[1] for item in operands.items() if item[1] != 0}
+
         len1 = len(operators)
         len2 = len(operands)
         rows = max(len1, len2)
@@ -116,6 +132,7 @@ class MainWindow(QMainWindow):
         content = file.read()
         file.close()
         self.file_content.setText(content)
+        self.parse_button.setDisabled(False)
 
 if __name__ == "__main__":
     import sys

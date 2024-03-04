@@ -19,13 +19,13 @@ def count_variables(node):
             s+=tmp
 
             if s not in vars.keys():
-
+                if s == ".":
+                    pass
                 vars[s] = 1
             else:
                 vars[s] +=1
         elif isinstance(n, ast.Constant):
             if str(n.value) not in vars.keys():
-
                 vars[str(n.value)] = 1
             else:
                 vars[str(n.value)] +=1
@@ -284,23 +284,13 @@ def count_skobki(text, funcs):
     new_word = ""
     res = 0
     temp = (3+4)*4
-    kostyl = True
     for char in text:
-        if char == '"':
-            if kostyl:
-                kostyl = False
-                continue
-            if not kostyl:
-                kostyl = True
-                continue
-        elif not kostyl:
-            continue
-        elif char == "(" and ((new_word == "" and last_word not in funcs) or new_word not in funcs) and last_word != ']':
-            res+=1
-        elif (char not in string.ascii_letters and char != '_') and new_word != "":
+        if  char not in string.ascii_letters and new_word != "":
             last_word = new_word
             new_word = ""
-        elif char != '\n':
+        elif char == "(" and ((new_word == "" and last_word not in funcs) or new_word not in funcs):
+            res+=1
+        else:
             new_word+=char
     return res
 
@@ -320,7 +310,6 @@ def parse_file(file_path):
     opr = count_binaty_opr(tree)
     funcs = count_func(tree, vars)
     skobki = count_skobki(text, funcs)
-    print(f"vars  : {vars}\n loops: {loops}\n opr: {opr}\n funcs {funcs}\n tryes: {tryes} skobki: {skobki}")
 if __name__ == "__main__":
     file_path = "example.py"
     parse_file(file_path)
