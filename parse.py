@@ -285,8 +285,9 @@ def count_skobki(text, funcs):
     res = 0
     temp = (3+4)*4
     kostyl = True
-    for char in text:
-        if char == '"':
+    stack = []
+    for i in range(0, len(text)):
+        if text[i] == '"':
             if kostyl:
                 kostyl = False
                 continue
@@ -295,22 +296,68 @@ def count_skobki(text, funcs):
                 continue
         elif not kostyl:
             continue
-        elif char == "(" and ((new_word == "" and last_word not in funcs) or new_word not in funcs) and last_word != ']':
+        elif text[i] == "(" and ((new_word == "" and last_word not in funcs) or new_word not in funcs) and last_word != ']' and text[i+1] != ')':
             res+=1
-        elif (char not in string.ascii_letters and char != '_') and new_word != "":
+        elif text[i] not in string.ascii_letters and text[i] != '_' and new_word != "":
             last_word = new_word
             new_word = ""
-        elif char != '\n':
-            new_word+=char
+        elif text[i] != '\n':
+            new_word+=text[i]
     return res
 
+def count_skobki2(text, funcs):
+    i = 0
+    res = 0
+    while(i < len(text)):
+        curr_line = ""
+        stack = []
+        if (text[i] == "\n"):
+            i += 1
+            continue
+        a = len(text)
+        while(text[i] != '\n'):
+            curr_line += text[i]
+            i += 1
+            if i == len(text):
+                break
 
+        word_bef_bracket = ""
+        in_str = False
 
+        for j in range(0, len(curr_line)):
+            if ord(curr_line[j]) == 34:
+                if in_str:
+                    in_str = False
+                else:
+                    in_str = True
+                    continue
+            elif in_str:
+                continue
+            elif curr_line[j] != '(' and curr_line[j] != ' ':
+                word_bef_bracket += curr_line[j]
+            elif curr_line[j] == ' ':
+                word_bef_bracket = ""
+            elif curr_line[j] == '(' and word_bef_bracket == "":
+                k = 1
+                ok = True
+                stack.append(')')
+                while len(stack) != 0:
+                    if curr_line[j+k] == ')':
+                        stack.pop()
+                    elif curr_line[j+k] == '(':
+                        stack.append('(')
+                    elif curr_line[j+k] == ',' and len(stack) == 1:
+                        ok = False
+                        break
+                    k += 1
+                if(ok):
+                    res += 1
+    return res
 
 
 def parse_file(file_path):
     with open(file_path, 'r') as f:
-        text= f.read()
+        text = f.read()
         tree = ast.parse(text)
 
 

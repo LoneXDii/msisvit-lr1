@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import QSize, Qt
-from parser import *
+from parse import *
 import numpy
 
 def parse_file(file_path):
@@ -80,7 +80,7 @@ class MainWindow(QMainWindow):
         tryes = count_try_excent(tree)
         opr = count_binaty_opr(tree)
         funcs = count_func(tree, vars)
-        skobki = {"( )":count_skobki(text, funcs)}
+        skobki = {"( )":count_skobki2(text, funcs)}
         operators = loops | tryes | opr | funcs
         operands = vars | skobki
 

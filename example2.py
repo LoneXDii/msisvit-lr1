@@ -2,7 +2,7 @@ a = ((7+1) * (3+2))
 testfunc()
 testfunc(a)
 testfunc(1+1)
-b = 2+(3-4)
+b = 2 + (3-4)
 for char in text:
 
     if char == "(" and ((new_word == "" and last_word not in funcs) or new_word not in funcs):
