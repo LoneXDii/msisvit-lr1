@@ -1,3 +1,4 @@
+
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import QSize, Qt
 from parse import *

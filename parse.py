@@ -232,8 +232,6 @@ def count_func(node,vars):
         "def":0
     }
     for n in ast.walk(node):
-        if isinstance(n, ast.ClassDef):
-            funcs["class"]+=1
         if isinstance(n, ast.With):
             funcs["with"]+=1
         if isinstance(n, ast.Assert):
@@ -250,13 +248,13 @@ def count_func(node,vars):
             funcs["yeild from"]+=1
         if isinstance(n, ast.Call):
             if isinstance(n.func, ast.Attribute):#methods
-                if n.func.attr  in vars:
-                    vars[n.func.attr] -= 1
+                if n.func.value.id+"."+n.func.attr  in vars:
+                    vars[n.func.value.id+"."+n.func.attr] -= 1
 
-                if n.func.attr not in funcs:
-                    funcs[n.func.attr]=1
+                if n.func.value.id+"."+n.func.attr not in funcs:
+                    funcs[n.func.value.id+"."+n.func.attr]=1
                 else:
-                    funcs[n.func.attr] += 1
+                    funcs[n.func.value.id+"."+n.func.attr] += 1
             elif isinstance(n.func, ast.Name):#functions
                 if n.func.id in vars:
                     vars[n.func.id]-=1
@@ -264,15 +262,14 @@ def count_func(node,vars):
                     funcs[n.func.id]=1
                 else:
                     funcs[n.func.id] += 1
-        #???do we need to add a function declaration to the operands????
         if isinstance(n, ast.FunctionDef):
-            funcs["def"]+=1
+            #funcs["def"]+=1
             if n.name not in funcs:
                 funcs[n.name] = 1
             else:
                 funcs[n.name] += 1
         if isinstance(n, ast.ClassDef):
-            funcs["class"]+=1
+            #funcs["class"]+=1
             if n.name not in funcs:
                 funcs[n.name] = 1
             else:

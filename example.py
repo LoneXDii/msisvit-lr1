@@ -194,3 +194,12 @@ def main():
     print("Integral of sin(x) from 1 to 5:", result)
 
 main()
+
+
+
+
+
+
+
+
+
