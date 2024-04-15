@@ -28,13 +28,13 @@ class MainWindow(QMainWindow):
 
         self.file_content = QTextEdit(self)
         self.file_content.setReadOnly(True)
-        self.file_content.setMinimumWidth(700)
+        self.file_content.setMinimumWidth(500)
         self.file_content.setMinimumHeight(800)
-        self.file_content.move(1000, 20)
+        self.file_content.move(1200, 20)
 
         self.parse_button = QPushButton(self)
         self.parse_button.setText("Рассчитать метрики Холстеда и Джилбо")
-        self.parse_button.setMinimumWidth(300)
+        self.parse_button.setMinimumWidth(500)
         self.parse_button.move(200, 0)
         self.parse_button.setDisabled(True)
         self.parse_button.clicked.connect(self.on_parse_clicked)
@@ -51,52 +51,64 @@ class MainWindow(QMainWindow):
 
         self.hLabel = QLineEdit(self)
         self.hLabel.setReadOnly(True)
-        self.hLabel.setMinimumWidth(300)
+        self.hLabel.setMinimumWidth(500)
         self.hLabel.move(700, 30)
         self.hLabel.setText("Дополнительные метрики Холстеда:")
 
         self.program_dict = QLineEdit(self)
         self.program_dict.setReadOnly(True)
-        self.program_dict.setMinimumWidth(300)
+        self.program_dict.setMinimumWidth(500)
         self.program_dict.move(700, 60)
 
         self.program_len = QLineEdit(self)
         self.program_len.setReadOnly(True)
-        self.program_len.setMinimumWidth(300)
+        self.program_len.setMinimumWidth(500)
         self.program_len.move(700, 90)
 
         self.program_volume = QLineEdit(self)
         self.program_volume.setReadOnly(True)
-        self.program_volume.setMinimumWidth(300)
+        self.program_volume.setMinimumWidth(500)
         self.program_volume.move(700, 120)
 
         self.jLabel = QLineEdit(self)
         self.jLabel.setReadOnly(True)
-        self.jLabel.setMinimumWidth(300)
+        self.jLabel.setMinimumWidth(500)
         self.jLabel.move(700, 180)
         self.jLabel.setText("Метрики Джилбо:")
 
         self.CL = QLineEdit(self)
         self.CL.setReadOnly(True)
-        self.CL.setMinimumWidth(300)
+        self.CL.setMinimumWidth(500)
         self.CL.move(700, 210)
 
         self.cl = QLineEdit(self)
         self.cl.setReadOnly(True)
-        self.cl.setMinimumWidth(300)
+        self.cl.setMinimumWidth(500)
         self.cl.move(700, 240)
 
         self.CLI = QLineEdit(self)
         self.CLI.setReadOnly(True)
-        self.CLI.setMinimumWidth(300)
+        self.CLI.setMinimumWidth(500)
         self.CLI.move(700, 270)
+
+        self.jcodelabel = QLineEdit(self)
+        self.jcodelabel.setReadOnly(True)
+        self.jcodelabel.setMinimumWidth(500)
+        self.jcodelabel.move(700, 300)
+        self.jcodelabel.setText("Условный оператор с максимальной вложенностью")
+
+        self.jcode = QTextEdit(self)
+        self.jcode.setReadOnly(True)
+        self.jcode.setMinimumWidth(500)
+        self.jcode.setMinimumHeight(370)
+        self.jcode.move(700, 330)
 
     def on_parse_clicked(self):
         #self.file_content.toPlainText() ##Код программы
         # operators = get_operators ##Вернет словарь из операторов и числа их появлений
         #operands = get_operands ##Вернет словарь из операндов и числа их появлений
 
-        max_depth, count, operands, operators = parse_file(self.file_path)
+        max_depth,code_with_max_depth, count, operands, operators = parse_file(self.file_path)
 
         operators = {item[0]: item[1] for item in operators.items() if item[1] != 0}
         operands = {item[0]: item[1] for item in operands.items() if item[1] != 0}
@@ -119,6 +131,7 @@ class MainWindow(QMainWindow):
         CL = count
         CLI = max_depth
         cl = CL / operator_count
+
 
         i = 0
         operand_count = 0
@@ -145,6 +158,7 @@ class MainWindow(QMainWindow):
         self.CL.setText("Количество усл. операторов CL = " + str(CL))
         self.cl.setText("Насыщенность программы cl = " + str(cl))
         self.CLI.setText("Максимальная вложенность CLI = " + str(CLI))
+        self.jcode.setText(code_with_max_depth)
 
     def on_file_clicked(self):
         self.file_path = QFileDialog.getOpenFileNames(self, "Open file", None, "*.py")[0][0]
